@@ -4,23 +4,16 @@ from itertools import zip_longest
 
 class InvalidState(Exception): pass
 
-class _State: pass
-
-class State:
-	instances = {n:_State() for n in range(2)}
-	def __new__(cls, n):
-		inst = cls.instances.get(n, None)
-		if not inst:
-			raise InvalidState("%s is not a valid state" % n)
-		return inst
+class State: pass
 
 def all_indexes(l, e):
 	return [i for i,el in enumerate(l) if el==e]
 
 class TM:
-	def __init__(self):
+	def __init__(self, num_states=2):
+		[setattr(self, str(n), type(str(n), (State,), {})) for n in range(num_states)]
+		self.state = getattr(self,"1")
 		self.tape = defaultdict(lambda :0)
-		self.state = State(1)
 		self.pos = 0
 		self.instructions = {}
 
@@ -33,7 +26,7 @@ class TM:
 		return self
 
 	def __next__(self):
-		if self.state == State(0):
+		if self.state == getattr(self,"0"):
 			raise StopIteration
 		else:
 			inst = self.instructions[(self.state, self.tape[self.pos])]
@@ -42,7 +35,7 @@ class TM:
 	
 	def set_instructions(self, instructions_list):
 		for inst in instructions_list:
-			self.instructions[State(inst[0]), inst[1]] = (inst[2], inst[3], State(inst[4]))
+			self.instructions[getattr(self,str(inst[0])), inst[1]] = (inst[2], inst[3], getattr(self,str(inst[4])))
 
 	def set_input(self, value):
 		value_list = []
