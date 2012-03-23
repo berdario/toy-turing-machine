@@ -2,18 +2,13 @@
 from collections import defaultdict
 from itertools import zip_longest
 
-class InvalidState(Exception): pass
-
-class State: pass
-
 def all_indexes(l, e):
 	return [i for i,el in enumerate(l) if el==e]
 
 class TM:
-	def __init__(self, num_states=2):
-		[setattr(self, str(n), type(str(n), (State,), {})) for n in range(num_states)]
-		self.state = getattr(self,"1")
+	def __init__(self):
 		self.tape = defaultdict(lambda :0)
+		self.state = 1
 		self.pos = 0
 		self.instructions = {}
 
@@ -26,16 +21,16 @@ class TM:
 		return self
 
 	def __next__(self):
-		if self.state == getattr(self,"0"):
+		if self.state == 0:
 			raise StopIteration
 		else:
 			inst = self.instructions[(self.state, self.tape[self.pos])]
 			self.eval(*inst)
-			return None
+			return self
 	
 	def set_instructions(self, instructions_list):
 		for inst in instructions_list:
-			self.instructions[getattr(self,str(inst[0])), inst[1]] = (inst[2], inst[3], getattr(self,str(inst[4])))
+			self.instructions[inst[0], inst[1]] = (inst[2], inst[3], inst[4])
 
 	def set_input(self, value):
 		value_list = []
@@ -51,6 +46,14 @@ class TM:
 		zeros = [None] + all_indexes(cell_list, 0)
 		slices = (cell_list[slice(*s)] for s in zip_longest(zeros, zeros[1:]))
 		return tuple(sum(s)-1 for s in slices)
+	
+	def __str__(self):
+		state = str(self.state)
+		m = min(self.tape)
+		cell_list = [str(v) for k,v in sorted(self.tape.items())]
+		size = len(cell_list)
+		return state + "v".rjust(self.pos+1-m) + "\n" + \
+	("".join(cell_list)).rjust(size+len(state))
 
 if __name__ == "__main__":
 	instructions = [
@@ -60,5 +63,5 @@ if __name__ == "__main__":
 	tm = TM()
 	tm.set_instructions(instructions)
 	tm.set_input(4)
-	list(tm)
-	print(tm.get_output())
+	print("\n\n".join(str(step) for step in tm))
+	print(*tm.get_output())
