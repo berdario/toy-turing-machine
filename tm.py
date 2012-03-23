@@ -32,7 +32,13 @@ class TM:
 		for inst in instructions_list:
 			self.instructions[inst[0], inst[1]] = (inst[2], inst[3], inst[4])
 
+	def _reset(self):
+		self.tape.clear()
+		self.state = 1
+		self.pos = 0
+
 	def set_input(self, value):
+		self._reset()
 		value_list = []
 		try:
 			for e in value:
@@ -55,13 +61,38 @@ class TM:
 		return state + "v".rjust(self.pos+1-m) + "\n" + \
 	("".join(cell_list)).rjust(size+len(state))
 
-if __name__ == "__main__":
+
+from unittest import TestCase, main
+from random import randint
+from itertools import accumulate
+
+class AbstractTest:
+	def setUp(self):
+		self.tm = TM()
+		self.tm.set_instructions(type(self).instructions)
+		self.inputs = self.prepare_inputs()
+		
+	def prepare_inputs(self):
+		return list(accumulate(randint(1,11) for i in range(20)))
+
+	def test_instructions(self):
+		for inp in self.inputs:
+			self.tm.set_input(inp)
+			list(self.tm)
+			self.check_output(inp)
+		
+	def check_output(self, inp):
+		raise NotImplemented
+
+class PlusOne(AbstractTest, TestCase):
 	instructions = [
 		(1,1,1,1,1),
 		(1,0,1,0,0)
 		]
-	tm = TM()
-	tm.set_instructions(instructions)
-	tm.set_input(4)
-	print("\n\n".join(str(step) for step in tm))
-	print(*tm.get_output())
+
+	def check_output(self, inp):
+		self.assertEqual(inp+1, *self.tm.get_output())
+
+
+if __name__ == "__main__":
+	main()
