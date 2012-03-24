@@ -51,7 +51,7 @@ class TM:
 		cell_list = [v for k,v in sorted(self.tape.items())]
 		zeros = [None] + all_indexes(cell_list, 0)
 		slices = (cell_list[slice(*s)] for s in zip_longest(zeros, zeros[1:]))
-		return tuple(sum(s)-1 for s in slices)
+		return tuple(sum(s)-1 for s in slices if any(s))
 	
 	def __str__(self):
 		state = str(self.state)
@@ -73,7 +73,7 @@ class AbstractTest:
 		self.inputs = self.prepare_inputs()
 		
 	def prepare_inputs(self):
-		return list(accumulate(randint(1,11) for i in range(20)))
+		return list(accumulate(randint(0,11) for i in range(20)))
 
 	def test_instructions(self):
 		for inp in self.inputs:
@@ -93,6 +93,57 @@ class PlusOne(AbstractTest, TestCase):
 	def check_output(self, inp):
 		self.assertEqual(inp+1, *self.tm.get_output())
 
+class CheckPair(AbstractTest, TestCase):
+	instructions = [
+		(1,1,1,0,0)
+		]
+	def prepare_inputs(self):
+		return ((randint(0,11),randint(0,11)) for i in range(20))
+
+	def check_output(self, inp):
+		self.assertEqual(inp, self.tm.get_output())
+
+class SumPair(AbstractTest, TestCase):
+	instructions = [
+		(1,1,1,1,1),
+		(1,0,1,1,2),
+		(2,1,1,1,2),
+		(2,0,0,-1,3),
+		(3,1,0,-1,4),
+		(4,1,0,0,0)
+		]
+	def prepare_inputs(self):
+		return ((randint(0,11),randint(0,11)) for i in range(20))
+
+	def check_output(self, inp):
+		self.assertEqual(sum(inp), *self.tm.get_output())
+
+class Double(AbstractTest, TestCase):
+	instructions = [
+		(1,1,1,1,1),
+		(1,0,0,-1,2),
+		(2,1,1,-1,3),
+		(3,0,0,-1,3),
+		(3,1,1,-1,4),
+		(4,1,1,1,5),
+		(4,0,0,1,10),
+		(5,1,0,1,6),
+		(6,0,0,1,6),
+		(6,1,1,1,7),
+		(7,0,0,1,8),
+		(8,0,1,0,9),
+		(8,1,1,1,8),
+		(9,1,1,-1,9),
+		(9,0,0,-1,2),
+		(10,1,1,1,10),
+		(10,0,1,1,11),
+		(11,0,1,1,11),
+		(11,1,1,1,12),
+		(12,0,1,0,0)
+		]
+
+	def check_output(self, inp):
+		self.assertEqual(2*inp, *self.tm.get_output())
 
 if __name__ == "__main__":
 	main()
