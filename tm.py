@@ -122,54 +122,7 @@ class SumPair(AbstractTest, TestCase):
 	def check_output(self, inp):
 		self.assertEqual(sum(inp), *self.tm.get_output())
 
-class SumPair2(AbstractTest, TestCase):
-	instructions = [
-		(1,1,0,1,2),
-		(2,1,1,1,2),
-		(2,0,1,1,3),
-		(3,1,1,1,3),
-		(3,0,0,-1,4),
-		(4,1,0,0,0)
-		]
-	inputs = prepare_tuple_list()
-
-	def check_output(self, inp):
-		self.assertEqual(sum(inp), *self.tm.get_output())
-
-
 class Double(AbstractTest, TestCase):
-	instructions = [
-		(1,1,1,1,13),
-		(13,0,0,0,0),
-		(13,1,1,1,14),
-		(14,0,1,0,0),
-		(14,1,1,1,15),
-		(15,1,1,1,15),
-		(15,0,0,-1,2),
-		(2,1,1,-1,3),
-		(3,0,0,-1,3),
-		(3,1,1,-1,4),
-		(4,1,1,1,5),
-		(4,0,0,1,10),
-		(5,1,0,1,6),
-		(6,0,0,1,6),
-		(6,1,1,1,7),
-		(7,0,0,1,8),
-		(8,0,1,0,9),
-		(8,1,1,1,8),
-		(9,1,1,-1,9),
-		(9,0,0,-1,2),
-		(10,1,1,1,10),
-		(10,0,1,1,11),
-		(11,0,1,1,11),
-		(11,1,1,1,12),
-		(12,0,1,0,0)
-		]
-
-	def check_output(self, inp):
-		self.assertEqual(2*inp, *self.tm.get_output())
-
-class Double2(AbstractTest, TestCase):
 	instructions = [
 		(1,1,1,1,2),
 		(2,0,0,0,0),
