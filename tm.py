@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 from collections import defaultdict
-from itertools import zip_longest
+from itertools import zip_longest, chain
 
 def all_indexes(l, e):
 	return [i for i,el in enumerate(l) if el==e]
@@ -66,14 +66,20 @@ from unittest import TestCase, main
 from random import randint
 from itertools import accumulate
 
+def prepare_list():
+	return chain([0, 1], accumulate(randint(0,11) for i in range(20)))
+
+def prepare_tuple_list():
+	return chain([(0,0),(1,0),(0,1),(1,1)], ((randint(0,11),randint(0,11)) for i in range(20)))
+
 class AbstractTest:
+	inputs = prepare_list()
+
 	def setUp(self):
 		self.tm = TM()
 		self.tm.set_instructions(type(self).instructions)
-		self.inputs = self.prepare_inputs()
+		self.inputs = type(self).inputs
 		
-	def prepare_inputs(self):
-		return list(accumulate(randint(0,11) for i in range(20)))
 
 	def test_instructions(self):
 		for inp in self.inputs:
@@ -97,8 +103,7 @@ class CheckPair(AbstractTest, TestCase):
 	instructions = [
 		(1,1,1,0,0)
 		]
-	def prepare_inputs(self):
-		return ((randint(0,11),randint(0,11)) for i in range(20))
+	inputs = prepare_tuple_list()
 
 	def check_output(self, inp):
 		self.assertEqual(inp, self.tm.get_output())
@@ -112,8 +117,7 @@ class SumPair(AbstractTest, TestCase):
 		(3,1,0,-1,4),
 		(4,1,0,0,0)
 		]
-	def prepare_inputs(self):
-		return ((randint(0,11),randint(0,11)) for i in range(20))
+	inputs = prepare_tuple_list()
 
 	def check_output(self, inp):
 		self.assertEqual(sum(inp), *self.tm.get_output())
@@ -127,8 +131,7 @@ class SumPair2(AbstractTest, TestCase):
 		(3,0,0,-1,4),
 		(4,1,0,0,0)
 		]
-	def prepare_inputs(self):
-		return ((randint(0,11),randint(0,11)) for i in range(20))
+	inputs = prepare_tuple_list()
 
 	def check_output(self, inp):
 		self.assertEqual(sum(inp), *self.tm.get_output())
@@ -161,6 +164,20 @@ class Double(AbstractTest, TestCase):
 		(11,0,1,1,11),
 		(11,1,1,1,12),
 		(12,0,1,0,0)
+		]
+
+	def check_output(self, inp):
+		self.assertEqual(2*inp, *self.tm.get_output())
+
+class Double2(AbstractTest, TestCase):
+	instructions = [
+		(1,1,1,1,2),
+		(2,0,0,0,0),
+		(2,1,1,-1,3),
+		(3,1,0,-1,3),
+		(3,0,1,1,4),
+		(4,0,1,1,4),
+		(4,1,1,0,1)
 		]
 
 	def check_output(self, inp):
