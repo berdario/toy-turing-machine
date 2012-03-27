@@ -118,6 +118,22 @@ class SumPair(AbstractTest, TestCase):
 	def check_output(self, inp):
 		self.assertEqual(sum(inp), *self.tm.get_output())
 
+class SumPair2(AbstractTest, TestCase):
+	instructions = [
+		(1,1,0,1,2),
+		(2,1,1,1,2),
+		(2,0,1,1,3),
+		(3,1,1,1,3),
+		(3,0,0,-1,4),
+		(4,1,0,0,0)
+		]
+	def prepare_inputs(self):
+		return ((randint(0,11),randint(0,11)) for i in range(20))
+
+	def check_output(self, inp):
+		self.assertEqual(sum(inp), *self.tm.get_output())
+
+
 class Double(AbstractTest, TestCase):
 	instructions = [
 		(1,1,1,1,13),
