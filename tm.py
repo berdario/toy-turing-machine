@@ -58,7 +58,7 @@ class TM:
 		m = min(self.tape)
 		cell_list = [str(v) for k,v in sorted(self.tape.items())]
 		size = len(cell_list)
-		return state + "v".rjust(self.pos+1-m) + "\n" + \
+		return state + "v".rjust(self.pos+2-m) + "\n " + \
 	("".join(cell_list)).rjust(size+len(state))
 
 
