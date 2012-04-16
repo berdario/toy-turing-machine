@@ -72,6 +72,9 @@ def prepare_list():
 def prepare_tuple_list():
 	return chain([(0,0),(1,0),(0,1),(1,1)], ((randint(0,11),randint(0,11)) for i in range(20)))
 
+def prepare_varlength_tuples():
+	return chain([(0,0),(1,0),(0,1),(1,1)], ([randint(0, 11) for i in range(randint(2, 200))] for j in range(20)))
+
 class AbstractTest:
 	inputs = prepare_list()
 
@@ -135,6 +138,23 @@ class Double(AbstractTest, TestCase):
 
 	def check_output(self, inp):
 		self.assertEqual(2*inp, *self.tm.get_output())
+
+class Sum(AbstractTest, TestCase):
+	instructions = [
+		(1,1,1,1,1),
+		(1,0,1,1,5),
+		(2,1,1,-1,2),
+		(2,0,0,1,3),
+		(3,1,0,1,4),
+		(4,1,0,1,1),
+		(5,1,1,0,2),
+		(5,0,0,-1,6),
+		(6,1,0,0,0),
+		]
+	inputs = prepare_varlength_tuples()
+
+	def check_output(self, inp):
+		self.assertEqual(sum(inp), *self.tm.get_output())
 
 if __name__ == "__main__":
 	main()
