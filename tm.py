@@ -6,6 +6,19 @@ def all_indexes(l, e):
 	return [i for i,el in enumerate(l) if el==e]
 
 class TM:
+	"""Turing Machine Simulator
+	
+the instructions are coded as 5-tuples of integers:
+(state, symbol, new_symbol, movement, new_state)
+
+the set_input and get_output methods work assuming a symbol alphabet of {0,1}
+
+you can get a nice representation of the steps of the TM with __str__ but next() will modify the current state, so you can't store the states in a list and expect that they remain unchanged
+you have to print them on the fly (tm is a TM instance):
+
+for state in tm:
+	print(state)
+"""
 	def __init__(self):
 		self.tape = defaultdict(lambda :0)
 		self.state = 1
@@ -38,6 +51,10 @@ class TM:
 		self.pos = 0
 
 	def set_input(self, value):
+		"""resets the TM and initializes it with the given input
+
+valid inputs are integers and iterables of integers		
+"""
 		self._reset()
 		value_list = []
 		try:
